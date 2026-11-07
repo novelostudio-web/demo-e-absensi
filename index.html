@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo E-Absensi - Track Studio</title>
+<style>
+:root{--ink:#14113A;--brand:#4B3FE0;--brand2:#7A6BFF;--amb:#FFC83D;--bg:#F4F3FF;--card:#fff;--mut:#5E5B85;--ok:#1FB86B;--no:#E5484D;--line:#DAD6FF;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 48px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--brand2),var(--brand));display:grid;place-items:center}
+.mark svg{width:24px;height:24px}
+h1{font-size:1.35rem;margin:0}
+.tag{margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.2em .8em;font-size:.85rem;color:var(--mut)}
+.lead{color:var(--mut);margin:6px 0 16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid var(--line);background:#fff;color:var(--ink);padding:.55em 1.1em;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.tab .n{display:inline-block;min-width:1.4em;text-align:center;margin-left:.4em;background:var(--amb);color:var(--ink);border-radius:999px;font-size:.8rem;padding:0 .4em}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.panel[hidden]{display:none}
+.hint{background:#EFEDFF;border-radius:12px;padding:.6em .9em;margin-bottom:14px;color:var(--ink);font-size:.95rem}
+.gate{display:grid;grid-template-columns:1fr 200px;gap:18px;align-items:start}
+.kids{display:grid;gap:10px}
+.kid{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--brand2);color:#fff;display:grid;place-items:center;font-weight:700}
+.kid b{display:block}
+.kid small{color:var(--mut)}
+.kid .st{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn{border:0;background:var(--brand);color:#fff;font:inherit;font-weight:600;padding:.5em 1em;border-radius:10px;cursor:pointer}
+.btn:disabled{background:#C9C6E8;cursor:default}
+.pill{border-radius:999px;padding:.15em .8em;font-size:.85rem;font-weight:600}
+.p-ok{background:#DDF6EA;color:#0C7A45}.p-wait{background:#EEEDF7;color:var(--mut)}.p-iz{background:#FFF1CC;color:#8A5A00}.p-sk{background:#FFE0E1;color:#A4262B}
+.reader{border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;background:#FAFAFF}
+.lamp{width:56px;height:56px;border-radius:50%;margin:0 auto 8px;background:var(--no);transition:.2s;border:4px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.lamp.on{background:var(--ok);box-shadow:0 0 0 8px rgba(31,184,107,.25)}
+.reader strong{display:block}
+.reader small{color:var(--mut)}
+.phone{max-width:320px;margin:0 auto;background:#201C4A;border-radius:34px;padding:16px 12px 22px;color:#fff}
+.phone .t{text-align:center;font-size:2.4rem;font-weight:700;line-height:1}
+.phone .d{text-align:center;font-size:.85rem;opacity:.8;margin:4px 0 14px}
+.notifs{display:grid;gap:8px;min-height:120px}
+.n{background:#fff;color:var(--ink);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:32px 1fr;gap:10px;font-size:.88rem;animation:drop .4s}
+.n i{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--brand2),var(--brand));display:grid;place-items:center}
+.n i svg{width:16px;height:16px}
+.n strong{display:block}.n em{font-style:normal;color:var(--mut);font-size:.78rem}
+.empty{color:#fff;opacity:.7;text-align:center;font-size:.9rem;padding:24px 8px}
+@keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.sum div{border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.sum b{display:block;font-size:1.6rem}.sum small{color:var(--mut)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:.6em .5em;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-size:.85rem}
+.scroll{overflow-x:auto}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.row .btn.alt{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.6em 1.2em;border-radius:12px;font-size:.92rem;max-width:90%;opacity:0;pointer-events:none;transition:.25s}
+#toast.show{opacity:1}
+footer{margin-top:18px;color:var(--mut);font-size:.88rem;text-align:center}
+@media (max-width:720px){.gate{grid-template-columns:1fr}.sum{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></div>
+    <h1>Demo E-Absensi</h1>
+    <span class="tag">Track Studio &middot; contoh data</span>
+  </header>
+  <p class="lead">Coba alurnya langsung: anak tap kartu di gerbang, notifikasi muncul di HP orang tua, rekap kelas terisi otomatis. Semua nama di bawah adalah contoh, bukan data sekolah.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t1" aria-selected="true" aria-controls="p1">1. Gerbang</button>
+    <button class="tab" role="tab" id="t2" aria-selected="false" aria-controls="p2">2. HP orang tua <span class="n" id="cnt" hidden>0</span></button>
+    <button class="tab" role="tab" id="t3" aria-selected="false" aria-controls="p3">3. Rekap guru</button>
+  </div>
+
+  <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+    <div class="hint">Tekan <b>Tap kartu</b> pada salah satu anak. Lalu buka tab "HP orang tua" dan "Rekap guru".</div>
+    <div class="gate">
+      <div class="kids" id="kids"></div>
+      <div class="reader">
+        <div class="lamp" id="lamp"></div>
+        <strong id="rd1">Siap membaca kartu</strong>
+        <small id="rd2">Lampu hijau = tercatat</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <div class="hint">Tampilan HP orang tua. Notifikasi masuk begitu anak tap kartu.</div>
+    <div class="phone">
+      <div class="t" id="clock">06.12</div>
+      <div class="d" id="date">Kelas 3A (contoh)</div>
+      <div class="notifs" id="notifs"><div class="empty" id="empty">Belum ada notifikasi. Tap kartu di tab Gerbang.</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+    <div class="hint">Rekap Kelas 3A untuk guru. Terisi otomatis dari tap kartu dan catatan izin/sakit.</div>
+    <div class="sum">
+      <div><b id="sH">0</b><small>Hadir</small></div>
+      <div><b id="sI">1</b><small>Izin</small></div>
+      <div><b id="sS">1</b><small>Sakit</small></div>
+      <div><b id="sB">3</b><small>Belum tap</small></div>
+    </div>
+    <div class="scroll"><table><thead><tr><th>Nama</th><th>Status</th><th>Jam</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="row"><button class="btn alt" id="xl" type="button">Unduh rekap Excel</button><button class="btn alt" id="reset" type="button">Ulangi demo</button></div>
+  </section>
+
+  <footer>Ini demo di browser. Di sekolah, data tersimpan di Google Sheets milik sekolah dan notifikasi dikirim lewat aplikasi.</footer>
+</div>
+<div id="toast" role="status"></div>
+<script>
+(function(){
+  var S = [
+    {n:"Sophie", st:"wait"}, {n:"Raka", st:"wait"}, {n:"Nadia", st:"wait"},
+    {n:"Dimas", st:"sk"}, {n:"Aisyah", st:"iz"}
+  ];
+  var notifs = [];
+  function pad(x){return (x<10?"0":"")+x}
+  function now(){var d=new Date();return pad(d.getHours())+"."+pad(d.getMinutes())+":"+pad(d.getSeconds())}
+  function $(id){return document.getElementById(id)}
+  function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("show")},2600)}
+  function beep(){try{var A=window.AudioContext||window.webkitAudioContext;if(!A)return;var c=new A(),t=c.currentTime;[1500,1900].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.setValueAtTime(.0001,t+i*.14);g.gain.exponentialRampToValueAtTime(.15,t+i*.14+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.14+.12);o.connect(g);g.connect(c.destination);o.start(t+i*.14);o.stop(t+i*.14+.14)})}catch(e){}}
+  var pill={ok:'<span class="pill p-ok">Hadir</span>',wait:'<span class="pill p-wait">Belum tap</span>',iz:'<span class="pill p-iz">Izin</span>',sk:'<span class="pill p-sk">Sakit</span>'};
+  function render(){
+    var k=$("kids"),tb=$("tb"),h=0,i=0,s=0,b=0;k.innerHTML="";tb.innerHTML="";
+    S.forEach(function(x,idx){
+      if(x.st==="ok")h++;else if(x.st==="iz")i++;else if(x.st==="sk")s++;else b++;
+      var can=x.st==="wait";
+      var d=document.createElement("div");d.className="kid";
+      d.innerHTML='<div class="av">'+x.n[0]+'</div><div><b>'+x.n+'</b><small>Kelas 3A</small></div><div class="st">'+pill[x.st]+'<button class="btn" '+(can?"":"disabled")+' data-i="'+idx+'" type="button">Tap kartu</button></div>';
+      k.appendChild(d);
+      var r=document.createElement("tr");r.innerHTML='<td>'+x.n+'</td><td>'+pill[x.st]+'</td><td>'+(x.t||"-")+'</td>';tb.appendChild(r);
+    });
+    $("sH").textContent=h;$("sI").textContent=i;$("sS").textContent=s;$("sB").textContent=b;
+    var c=$("cnt");c.textContent=notifs.length;c.hidden=!notifs.length;
+    var box=$("notifs");box.innerHTML="";
+    if(!notifs.length){box.innerHTML='<div class="empty">Belum ada notifikasi. Tap kartu di tab Gerbang.</div>'}
+    notifs.slice().reverse().forEach(function(n){
+      var e=document.createElement("div");e.className="n";
+      e.innerHTML='<i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></i><div><strong>E-Absensi</strong>Siswa/i atas nama '+n.n+' telah berhasil absen masuk, '+n.t+'<br><em>sekarang</em></div>';
+      box.appendChild(e);
+    });
+  }
+  $("kids").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-i]");if(!b)return;
+    var x=S[+b.getAttribute("data-i")];if(x.st!=="wait")return;
+    x.st="ok";x.t=now();notifs.push({n:x.n,t:x.t});
+    var l=$("lamp");l.classList.add("on");beep();
+    $("rd1").textContent=x.n+" tercatat";$("rd2").textContent="Hadir pukul "+x.t;
+    $("clock").textContent=x.t.slice(0,5);
+    setTimeout(function(){l.classList.remove("on")},1400);
+    render();toast("Notifikasi terkirim ke orang tua "+x.n);
+  });
+  function show(id){["1","2","3"].forEach(function(n){var on=n===id;$("p"+n).hidden=!on;$("t"+n).setAttribute("aria-selected",on)})}
+  ["1","2","3"].forEach(function(n){$("t"+n).addEventListener("click",function(){show(n)})});
+  $("xl").addEventListener("click",function(){toast("Di aplikasi sungguhan, rekap ini diunduh sebagai file Excel (.xlsx).")});
+  $("reset").addEventListener("click",function(){S.forEach(function(x){if(x.n==="Sophie"||x.n==="Raka"||x.n==="Nadia"){x.st="wait";delete x.t}});notifs=[];$("rd1").textContent="Siap membaca kartu";$("rd2").textContent="Lampu hijau = tercatat";render();toast("Demo diulang")});
+  render();
+})();
+</script>
+</body>
+</html>
